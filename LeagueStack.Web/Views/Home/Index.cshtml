@@ -1,0 +1,18 @@
+@model IReadOnlyList<LeagueStack.Web.Data.TenantConfig>
+@{
+    ViewData["Title"] = "Tenants";
+    var port = Context.Request.Host.Port;
+    var portSuffix = port.HasValue ? $":{port}" : string.Empty;
+}
+
+<h1>Tenants</h1>
+<ul>
+    @foreach (var tenant in Model)
+    {
+        <li>
+            <a href="http://@(tenant.TenantId).localhost@(portSuffix)/FixtureInsights">
+                @tenant.FriendlyName
+            </a>
+        </li>
+    }
+</ul>

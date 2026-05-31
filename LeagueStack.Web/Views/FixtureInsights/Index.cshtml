@@ -1,0 +1,84 @@
+@model LeagueStack.Web.Controllers.FixtureInsightsController.FixtureInsightsViewModel
+
+@{
+    ViewData["Title"] = "Fixture Insights";
+}
+
+<div>
+    <h1>@Model.TenantName Fixture Insights</h1>
+
+    <h2>Overall</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Total Fixtures</th>
+                <th>First Game</th>
+                <th>Final Game</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>@Model.TotalFixtures</td>
+                <td>@(Model.FirstGame?.ToString("dd MMM yyyy") ?? "-")</td>
+                <td>@(Model.FinalGame?.ToString("dd MMM yyyy") ?? "-")</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Per Season</h2>
+    @if (Model.Seasons.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Season</th>
+                    <th>Teams</th>
+                    <th>Fixtures</th>
+                    <th>Rounds</th>
+                    <th>First Game</th>
+                    <th>Final Game</th>
+                    <th>Duration (days)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var season in Model.Seasons)
+                {
+                    <tr>
+                        <td>
+                            <a href="#"
+                               hx-get="@Url.Action("Index", "Standings", new { competition = season.Name })"
+                               hx-target="#standings-modal"
+                               hx-swap="innerHTML">
+                                @season.Name
+                            </a>
+                        </td>
+                        <td>@season.TeamCount</td>
+                        <td>@season.FixtureCount</td>
+                        <td>@season.RoundCount</td>
+                        <td>@(season.FirstGame?.ToString("dd MMM yyyy") ?? "-")</td>
+                        <td>@(season.FinalGame?.ToString("dd MMM yyyy") ?? "-")</td>
+                        <td>@(season.DurationInDays?.ToString() ?? "-")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p><em>No per-season data — implement the SQL queries in FixtureInsightsController to populate this.</em></p>
+    }
+</div>
+
+<div id="standings-modal" class="modal fade" tabindex="-1">
+</div>
+
+@section Scripts {
+    <script>
+        document.body.addEventListener('htmx:afterSwap', function (event) {
+            if (event.detail.target.id === 'standings-modal') {
+                var modal = new bootstrap.Modal(event.detail.target);
+                modal.show();
+            }
+        });
+    </script>
+}

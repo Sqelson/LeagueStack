@@ -1,0 +1,96 @@
+@using LeagueStack.Web.Services
+@using LeagueStack.Abstractions
+
+@inject TenantContext TenantContext
+@inject IBrandingService BrandingService
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+
+@{
+    var theme = TenantContext.Theme;
+    var baseDomain = Configuration["Multitenancy:BaseDomain"] ?? "localhost";
+    var scheme = Context.Request.Scheme;
+    var port = Context.Request.Host.Port;
+    var homeUrl = port.HasValue ? $"{scheme}://{baseDomain}:{port}/" : $"{scheme}://{baseDomain}/";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LeagueStack.Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LeagueStack.Web.styles.css" asp-append-version="true" />
+    <style>
+        :root {
+            --bs-primary: @theme.Primary;
+            --bs-secondary: @theme.Secondary;
+            --bs-body-bg: @theme.BodyBg;
+            --bs-body-color: @theme.BodyColor;
+            --bs-link-color: @theme.Primary;
+            --bs-link-hover-color: @theme.Primary;
+        }
+        body {
+            background-color: var(--bs-body-bg);
+            color: var(--bs-body-color);
+        }
+        .btn-primary {
+            --bs-btn-bg: @theme.Primary;
+            --bs-btn-border-color: @theme.Primary;
+            --bs-btn-hover-bg: @theme.Primary;
+            --bs-btn-hover-border-color: @theme.Primary;
+        }
+        .navbar {
+            --bs-navbar-brand-color: @theme.Primary;
+        }
+        a {
+            color: @theme.Primary;
+        }
+        a:hover {
+            color: @theme.Secondary;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="@homeUrl">
+                    @await BrandingService.GetLogo()
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+<footer class="border-top footer text-muted">
+        <div class="container">
+           @if (!TenantContext.HasTenant)
+           {
+	           <text>LeagueStack</text>
+           }
+           else
+           {
+                <text>@TenantContext.FriendlyName - 2025</text>
+           }
+        </div>
+    </footer>
+    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

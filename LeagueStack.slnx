@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="LeagueStack.Abstractions/LeagueStack.Abstractions.csproj" />
+  <Project Path="LeagueStack.Kent5aside/LeagueStack.Kent5aside.csproj" />
+  <Project Path="LeagueStack.PlayRounders/LeagueStack.PlayRounders.csproj" />
+  <Project Path="LeagueStack.SimpleCricket/LeagueStack.SimpleCricket.csproj" />
+  <Project Path="LeagueStack.Web/LeagueStack.Web.csproj" />
+</Solution>
